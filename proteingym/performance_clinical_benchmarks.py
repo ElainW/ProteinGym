@@ -254,7 +254,14 @@ def compute_pooled_auc(gene_ids, model_names, model_config, scores_folder, clean
         valid_mask = ~np.isnan(y_score)      # keeps ±inf, drops only genuine NaN
 
         try:
-            auc = roc_auc_score(y_true[valid_mask], y_score[valid_mask])
+            ys = y_score[valid_mask].to_numpy()
+            yt = y_true[valid_mask].to_numpy()
+
+            finite = ys[np.isfinite(ys)]
+            if finite.size:                                   # order-preserving inf -> finite
+                ys = np.where(np.isneginf(ys), finite.min() - 1.0, ys)
+                ys = np.where(np.isposinf(ys), finite.max() + 1.0, ys)
+            auc = roc_auc_score(yt, ys)
             results.append(
                 {
                     "Model_rank": None,
