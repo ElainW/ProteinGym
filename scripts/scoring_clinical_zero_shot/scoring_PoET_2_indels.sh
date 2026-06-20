@@ -14,11 +14,14 @@ export DMS_index="${DMS_index:-"variant index to run (e.g. 0,1,...1554)"}"
 export clinical_reference_file_path_indels="$(cd "$(dirname "$clinical_reference_file_path_indels")" && pwd)/$(basename "$clinical_reference_file_path_indels")"
 export clinical_data_folder_indels="$(cd "$(dirname "$clinical_data_folder_indels")" && pwd)/$(basename "$clinical_data_folder_indels")"
 
+echo $DMS_structure_folder
+
 cd ../../proteingym/baselines/PoET-2 && pixi run --frozen \
     python scripts/score.py \
     --checkpoint $checkpoint \
     --DMS_reference_file_path $clinical_reference_file_path_indels \
     --DMS_data_folder $clinical_data_folder_indels \
+    --DMS_structure_folder $DMS_structure_folder \
     --DMS_index $DMS_index \
     --output_scores_folder $output_scores_folder \
     --MSA_folder $msa_folder \

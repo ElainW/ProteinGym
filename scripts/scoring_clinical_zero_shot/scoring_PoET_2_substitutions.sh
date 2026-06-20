@@ -19,6 +19,7 @@ cd ../../proteingym/baselines/PoET-2 && pixi run --frozen \
     --checkpoint $checkpoint \
     --DMS_reference_file_path $clinical_reference_file_path_subs \
     --DMS_data_folder $clinical_data_folder_subs \
+    --DMS_structure_folder $DMS_structure_folder \
     --DMS_index $DMS_index \
     --output_scores_folder $output_scores_folder \
     --MSA_folder $msa_folder \
