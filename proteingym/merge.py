@@ -78,8 +78,9 @@ def main():
                 score_files[model][input_score_name]
             score_files[model] = score_files[model][[mutant_merge_key, model]]
             score_files[model].drop_duplicates(inplace=True)
-            score_files[model] = score_files[model].groupby(
-                mutant_merge_key).mean().reset_index()
+            if args.dataset == "DMS":
+                score_files[model] = score_files[model].groupby(
+                    mutant_merge_key).mean().reset_index()
             # check that score_files[model][mutant_merge_key] and all_model_scores[DMS_mutant_column] are the same
             if set(score_files[model][mutant_merge_key]) & set(all_model_scores[DMS_mutant_column]) == set():
                 print("Warning: No overlap on mutants for {} with model {}. Skipping".format(DMS_id, model))
