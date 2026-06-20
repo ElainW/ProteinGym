@@ -6,7 +6,7 @@ export checkpoint="${checkpoint:-${PROTEINGYM_CACHE}/baselines/PoET-2/poet-2.ckp
 export output_scores_folder=${DMS_output_score_folder_indels}PoET-2
 export msa_folder=${PROTEINGYM_CACHE}/baselines/PoET/msas/DMS_indels
 export AF2_cache_folder=${PROTEINGYM_CACHE}/baselines/PoET-2/DMS_AF2_structures_cache
-export DMS_index="${DMS_index:-"Experiment index to run (e.g. 0,1,...216)"}"
+export DMS_index="${DMS_index:-"Experiment index to run (e.g. 0,1,...66)"}"
 # expand the following env vars to absolute paths instead of paths to relative to
 # the working directory since we'll be changing the working directory
 export DMS_reference_file_path_indels="$(cd "$(dirname "$DMS_reference_file_path_indels")" && pwd)/$(basename "$DMS_reference_file_path_indels")"
