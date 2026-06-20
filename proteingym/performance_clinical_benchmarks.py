@@ -246,8 +246,12 @@ def compute_pooled_auc(gene_ids, model_names, model_config, scores_folder, clean
 
         y_score = pooled_df[model].values
         directionality = model_config[model]["directionality"]
+        y_score = pd.to_numeric(pd.Series(y_score).astype(str).str.strip(),
+                        errors='coerce').to_numpy()
+        s = pd.to_numeric(pd.Series(y_score).astype(str).str.strip(), errors='coerce')
+        print("real -inf:", np.isinf(s).sum(), " | true NaN:", s.isna().sum())
         y_score = y_score * directionality
-        valid_mask = ~np.isnan(y_score)
+        valid_mask = ~np.isnan(y_score)      # keeps ±inf, drops only genuine NaN
 
         try:
             auc = roc_auc_score(y_true[valid_mask], y_score[valid_mask])
