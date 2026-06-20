@@ -104,9 +104,10 @@ def main():
                     len(score_files[model][mutant_merge_key].unique())))
                 print("Length merged file: {}".format(len(all_model_scores)))
                 continue
-        num_mutants_expected = reference_file[reference_file["DMS_id"] == DMS_id]["DMS_total_number_mutants"].values[0]
-        if len(all_model_scores) != num_mutants_expected:
-            print(f"Warning: Insufficient mutants for {DMS_id}: {len(all_model_scores)}, expected {num_mutants_expected}. Original DMS file length: {orig_DMS_length}")
+        if args.dataset == "DMS":
+            num_mutants_expected = reference_file[reference_file["DMS_id"] == DMS_id]["DMS_total_number_mutants"].values[0]
+            if len(all_model_scores) != num_mutants_expected:
+                print(f"Warning: Insufficient mutants for {DMS_id}: {len(all_model_scores)}, expected {num_mutants_expected}. Original DMS file length: {orig_DMS_length}")
         if not os.path.isdir(os.path.join(args.model_scores_location, args.merged_scores_dir)):
             os.mkdir(os.path.join(
                 args.model_scores_location, args.merged_scores_dir))
