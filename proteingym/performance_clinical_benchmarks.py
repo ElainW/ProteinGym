@@ -254,8 +254,8 @@ def compute_pooled_auc(gene_ids, model_names, model_config, scores_folder, clean
         valid_mask = ~np.isnan(y_score)      # keeps ±inf, drops only genuine NaN
 
         try:
-            ys = y_score[valid_mask].to_numpy()
-            yt = y_true[valid_mask].to_numpy()
+            ys = np.asarray(y_score[valid_mask], dtype=float)
+            yt = np.asarray(y_true[valid_mask])
 
             finite = ys[np.isfinite(ys)]
             if finite.size:                                   # order-preserving inf -> finite
