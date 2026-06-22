@@ -78,18 +78,23 @@ def main():
                 score_files[model][input_score_name]
             score_files[model] = score_files[model][[mutant_merge_key, model]]
             score_files[model].drop_duplicates(inplace=True)
-            if args.dataset == "DMS":
+            try:
                 score_files[model] = score_files[model].groupby(
                     mutant_merge_key).mean().reset_index()
+            except TypeError:
+                print(score_files[model], model, mutant_merge_key, DMS_index)
             # check that score_files[model][mutant_merge_key] and all_model_scores[DMS_mutant_column] are the same
-            if set(score_files[model][mutant_merge_key]) & set(all_model_scores[DMS_mutant_column]) == set():
+            model_keys = set(score_files[model][mutant_merge_key])
+            dms_keys   = set(all_model_scores[DMS_mutant_column])
+            if not (model_keys & dms_keys):
                 print("Warning: No overlap on mutants for {} with model {}. Skipping".format(DMS_id, model))
                 continue
-            elif set(score_files[model][mutant_merge_key]) < set(all_model_scores[DMS_mutant_column]):
-                # print difference between two key sets
-                print("WARNING: {} and {} do not have the same mutants. Skipping." \
-                    .format(model, DMS_id))
-                continue
+            elif model_keys < dms_keys:
+                # Model scored only a subset (e.g. HMM on indels). Merge what exists;
+                # the left merge leaves the unscored mutants as NaN, excluded later in AUROC.
+                print("Note: {} scored {}/{} mutants for {}; rest left as NaN.".format(
+                    model, len(model_keys & dms_keys), len(dms_keys), DMS_id))
+            # fall through to the rename + left merge below — no continue
             
             score_files[model] = score_files[model].rename(columns={mutant_merge_key: DMS_mutant_column})
             all_model_scores = pd.merge(all_model_scores, score_files[model], on=DMS_mutant_column, how='left')
@@ -114,7 +119,9 @@ def main():
                 args.model_scores_location, args.merged_scores_dir))
         all_model_scores.to_csv(os.path.join(
             args.model_scores_location, args.merged_scores_dir, f"{DMS_id}.csv"), index=False)
-        print("Length merged file: {}".format(len(all_model_scores)))
+#         print("Length merged file: {}".format(len(all_model_scores)))
+        print(f"{DMS_id}: DMS={orig_DMS_length}, merged={len(all_model_scores)}")
+        
 
 
 if __name__ == '__main__':
